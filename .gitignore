@@ -2,9 +2,11 @@
 #
 .DS_Store
 
-# NODE
+# modules
 ./node_modules
+yarn-error.log
 
 
 #
 .idea
+
