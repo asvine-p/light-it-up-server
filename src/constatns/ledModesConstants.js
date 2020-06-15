@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   FX_MODE_STATIC: 0,
   FX_MODE_BLINK: 1,
   FX_MODE_BREATH: 2,
