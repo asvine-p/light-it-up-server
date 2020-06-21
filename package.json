@@ -4,13 +4,24 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "socket.io-client": "^2.3.0",
+    "body-parser": "^1.19.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-github-webhook": "^1.0.6",
+    "lodash": "^4.17.15",
+    "mongoose": "^5.9.18",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.4",
     "ws": "^7.3.0"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon --exec babel-node src/server.js"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/node": "^7.10.1",
+    "@babel/preset-env": "^7.10.2",
     "prettier": "^2.0.5"
   }
 }

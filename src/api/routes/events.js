@@ -39,12 +39,18 @@ router.get('/:eventId', async (req, res, next) => {
 
 // --------  POST  --------//
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
   try {
+    const payload = req.body;
+    console.log('payload', payload);
+
+    const { type, event_filters, light_animation } = payload;
+
     const event = new Event({
       _id: new mongoose.Types.ObjectId(),
-      type: req.body.type,
-      light_animation: req.body.light_animation,
+      type,
+      event_filters,
+      light_animation,
     });
 
     const result = await event.save();
@@ -77,7 +83,6 @@ router.put('/:eventId', async (req, res, next) => {
     if (result) {
       res.status(200).json({
         message: `Event ${id} modified successfully`,
-
       });
     } else {
       res.status(404).json({ message: 'No event found' });
@@ -99,7 +104,7 @@ router.delete('/:eventId', async (req, res, next) => {
     const result = await Event.remove({ _id: id }).exec();
     if (result) {
       res.status(200).json({
-        message: 'Product deleted with success'
+        message: 'Product deleted with success',
       });
     } else {
     }

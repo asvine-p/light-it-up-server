@@ -3,43 +3,23 @@ import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import crypto from 'crypto';
 
 import eventsRoutes from './routes/events';
 import usersRoutes from './routes/users';
+import githubWebhooksRoutes from './webhooks/github';
 
 const app = express();
 
-//  -------   MIDDLEWARE  ------- //
+
+//  -------   MIDDLEWARES  ------- //
 
 // logging middleware
 app.use(morgan('dev'));
 
 // parser middleware
-
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({ verify: verifyRequest }));
+app.use(bodyParser.json());
 
-// CORS
-
-const getSignature = (buf) => {
-  var hmac = crypto.createHmac('sha1', process.env.GITHUB_SECRET);
-  hmac.update(buf, 'utf-8');
-  return 'sha1=' + hmac.digest('hex');
-};
-
-// Verify function compatible with body-parser to retrieve the request payload.
-// Read more: https://github.com/expressjs/body-parser#verify
-const verifyRequest = (req, res, buf, encoding) => {
-  const expected = req.headers['x-hub-signature'];
-  const calculated = getSignature(buf);
-  console.log('X-Hub-Signature:', expected, 'Content:', '-' + buf.toString('utf8') + '-');
-  if (expected !== calculated) {
-    throw new Error('Invalid signature.');
-  } else {
-    console.log('Valid signature!');
-  }
-};
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -55,13 +35,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/webhook', (req, res) => {
-  console.log('Webhook', res);
-  res.status(200).send("done!");
-});
-
-//  -------   MIDDLEWARE  ------- //
-
 // --------  MANGODB     ------- //
 
 mongoose.connect(
@@ -71,15 +44,14 @@ mongoose.connect(
 
 mongoose.Promise = global.Promise;
 
-// --------  MANGODB     ------- //
 
 //  -------   ROUTES  ------- //
 
 // Routes which should handle requests
 app.use('/events', eventsRoutes);
 app.use('/users', usersRoutes);
+app.use('/webhooks', githubWebhooksRoutes);
 
-//  -------   ROUTES  ------- //
 
 //  -------   ERROR  ------- //
 
@@ -102,5 +74,6 @@ app.use((error, req, res, next) => {
 });
 
 //  -------   ERROR  ------- //
+
 
 export default app;

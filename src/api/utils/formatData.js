@@ -6,11 +6,12 @@ export const formatEventsResponse = (events) => {
 };
 
 export const formatEventResponse = (eventResult) => {
-  const { _id, type, light_animation } = eventResult;
+  const { _id, type, event_filters, light_animation } = eventResult;
 
   return {
     _id,
     type,
+    event_filters,
     light_animation,
   };
 };
