@@ -42,17 +42,17 @@ const findMatchingEventFromFilters = (events = [], githubPayload = {}) => {
   });
 };
 
-export const onEvent = (eventName, payload) => {
+export const onEvent = async (eventName, payload) => {
   const { repository: { name: repositoryName } = {} } = payload;
 
   // SEARCH FOR EVENTS MARCHING EVENT_NAME AND REPO NAME
-  const foundEvents = Event.find({
+  const foundEvents = await Event.find({
     type: 'githubEvent',
     event_filters: {
       event_name: eventName,
       repositoryName: repositoryName,
     },
-  });
+  }).exec();
   console.log('FOUND EVENTS: ---> ', foundEvents);
 
 
