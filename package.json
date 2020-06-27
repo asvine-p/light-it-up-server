@@ -1,5 +1,5 @@
 {
-  "name": "websocket-lights",
+  "name": "light-it-up-server",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

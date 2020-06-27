@@ -27,15 +27,16 @@ export const onPing = async (payload) => {
 
 const findMatchingEventFromFilters = (events = [], githubPayload = {}) => {
   return events.find((event) => {
-    const { filters } = event;
+    const { event_filters: { filters } = {} } = event;
 
     return filters.reduce((acc, currentFilter) => {
       if (acc) {
         const { filter_key, filter_value } = currentFilter;
 
-        // FIND IN GITHUB PAYLOAD THE VALUE OF GIVEN KEY
-        const gitHubValue = _.get(githubPayload, filter_key);
-        return gitHubValue === filter_value;
+        // FIND IN GITHUB PAYLOAD THE VALUE OF GIVEN KEY USING LODASH
+        const matchingValue = _.get(githubPayload, filter_key);
+
+        return matchingValue === filter_value;
       }
       return false;
     }, true);
@@ -47,18 +48,14 @@ export const onEvent = async (eventName, payload) => {
 
   // SEARCH FOR EVENTS MARCHING EVENT_NAME AND REPO NAME
   const foundEvents = await Event.find({
-    type: 'githubEvent',
-    event_filters: {
-      event_name: eventName,
-      repositoryName: repositoryName,
-    },
+    type: 'github',
+    'event_filters.event_name': eventName,
+    'event_filters.repository_name': repositoryName,
   }).exec();
-  console.log('FOUND EVENTS: ---> ', foundEvents);
 
 
   if (foundEvents && foundEvents.length) {
-    const event = findMatchingEventFromFilters(foundEvents);
-    console.log('MATCHING FILTER EVENT: ---> ', event);
+    const event = findMatchingEventFromFilters(foundEvents, payload);
     if (event) {
       const { light_animation } = event;
       // EMIT LIGHTS
@@ -67,6 +64,4 @@ export const onEvent = async (eventName, payload) => {
   }
 };
 
-
 export const githubEmitter = githubEventEmitter;
-
