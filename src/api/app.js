@@ -5,11 +5,11 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 
 import eventsRoutes from './routes/events';
-import usersRoutes from './routes/users';
 import githubWebhooksRoutes from './webhooks/github';
+import githubRepositoriesRoutes from './routes/githubRepositories';
+import lightAnimations from './routes/lightAnimations';
 
 const app = express();
-
 
 //  -------   MIDDLEWARES  ------- //
 
@@ -19,7 +19,6 @@ app.use(morgan('dev'));
 // parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -32,7 +31,7 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
     return res.status(200).json({});
   }
-  next();
+  return next();
 });
 
 // --------  MANGODB     ------- //
@@ -44,14 +43,13 @@ mongoose.connect(
 
 mongoose.Promise = global.Promise;
 
-
 //  -------   ROUTES  ------- //
 
 // Routes which should handle requests
 app.use('/events', eventsRoutes);
-app.use('/users', usersRoutes);
+app.use('/repositories', githubRepositoriesRoutes);
 app.use('/webhooks', githubWebhooksRoutes);
-
+app.use('/light-animations', lightAnimations);
 
 //  -------   ERROR  ------- //
 
@@ -62,7 +60,7 @@ app.use((req, res, next) => {
   next(error);
 });
 
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
   res.status(error.status || 500);
 
   const { message } = error;
@@ -74,6 +72,5 @@ app.use((error, req, res, next) => {
 });
 
 //  -------   ERROR  ------- //
-
 
 export default app;

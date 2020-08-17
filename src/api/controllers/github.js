@@ -1,18 +1,20 @@
-import GithubRepository from '../models/github_repositories';
-import Event from '../models/events';
-import events from 'events';
+import Events from 'events';
 import _ from 'lodash';
+import GithubRepository from '../models/githubRepositories';
+import Event from '../models/events';
 
-const githubEventEmitter = new events.EventEmitter();
+const githubEventEmitter = new Events.EventEmitter();
 
 export const onPing = async (payload) => {
   try {
     const { repository = {}, hook: { events } = {} } = payload;
 
+    const { id: repository_id } = repository;
+
     await GithubRepository.updateOne(
-      { repository_id: repository.id },
+      { repository_id },
       {
-        repository_id: repository.id,
+        repository_id,
         events,
         ...repository,
       },
@@ -21,45 +23,49 @@ export const onPing = async (payload) => {
       },
     ).exec();
   } catch (e) {
-    console.log('error on Ping', e);
+    console.log('error on Ping', e); // eslint-disable-line no-console
   }
 };
 
-const findMatchingEventFromFilters = (events = [], githubPayload = {}) => {
-  return events.find((event) => {
-    const { event_filters: { filters } = {} } = event;
+const findMatchingEventFromFilters = (events = [], githubPayload = {}) =>
+  events.find((event) => {
+    const { eventFilters: { filters } = {} } = event;
 
     return filters.reduce((acc, currentFilter) => {
       if (acc) {
-        const { filter_key, filter_value } = currentFilter;
-
+        const { filterKey, filterValue } = currentFilter;
         // FIND IN GITHUB PAYLOAD THE VALUE OF GIVEN KEY USING LODASH
-        const matchingValue = _.get(githubPayload, filter_key);
+        const matchingValue = _.get(githubPayload, filterKey);
 
-        return matchingValue === filter_value;
+        return matchingValue === filterValue;
       }
       return false;
     }, true);
   });
-};
 
 export const onEvent = async (eventName, payload) => {
   const { repository: { name: repositoryName } = {} } = payload;
 
   // SEARCH FOR EVENTS MARCHING EVENT_NAME AND REPO NAME
   const foundEvents = await Event.find({
-    type: 'github',
-    'event_filters.event_name': eventName,
-    'event_filters.repository_name': repositoryName,
-  }).exec();
-
+    type: 'GitHub',
+    'eventFilters.eventName': eventName,
+    'eventFilters.repositoryName': repositoryName,
+  })
+    .populate({
+      path: 'animation',
+      populate: { path: 'lightAnimation', model: 'LightAnimation' },
+    })
+    .exec();
 
   if (foundEvents && foundEvents.length) {
     const event = findMatchingEventFromFilters(foundEvents, payload);
+
     if (event) {
-      const { light_animation } = event;
+      const { animation } = event;
+
       // EMIT LIGHTS
-      githubEventEmitter.emit('githubEvent', light_animation);
+      githubEventEmitter.emit('githubEvent', animation);
     }
   }
 };

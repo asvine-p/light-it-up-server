@@ -1,21 +1,50 @@
 import WebSocket from 'ws';
-import LED_MODES from '../constatns/ledModesConstants';
 import { githubEmitter } from '../api/controllers/github';
+
 let wss;
 
-export const initWebSocketServer = (server) => {
+const initWebSocketServer = (server) => {
   wss = new WebSocket.Server({ server });
 
-  wss.on('connection', (ws, req) => {
-    githubEmitter.on('githubEvent', (light_animation) => {
-      const { animation_mode_id, duration } = light_animation;
+  // ON CONNECTION
+  wss.on('connection', (ws) => {
+    ws.isAlive = true; // eslint-disable-line no-param-reassign
 
-      ws.send(`${animation_mode_id},${duration}`);
+    // ON PONG
+    ws.on('pong', () => {
+      ws.isAlive = true;
     });
 
+    // SEND EVENT TO ESP
+    githubEmitter.on('githubEvent', (animation) => {
+      const { light_animation: { animation_id } = {}, duration } = animation;
+      ws.send(`${animation_id},${duration}`);
+    });
+
+    // ON MESSAGE
     ws.on('message', (message) => {
-      //log the received message and send it back to the client
-      console.log('received: %s', message);
+      // log the received message and send it back to the client
+      console.log('received: %s', message); // eslint-disable-line no-console
     });
   });
+
+  const interval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+      if (ws.isAlive === false) {
+        ws.terminate();
+      } else {
+        ws.isAlive = false;
+        ws.ping(() => {
+          console.log('Send Ping to client'); // eslint-disable-line no-console
+        });
+      }
+    });
+  }, 60000);
+
+  // ON CLOSE
+  wss.on('close', () => {
+    clearInterval(interval);
+  });
 };
+
+export default initWebSocketServer;

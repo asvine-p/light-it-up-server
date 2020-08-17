@@ -1,17 +1,20 @@
-export const formatEventsResponse = (events) => {
-  return {
-    count: events.length,
-    events,
-  };
-};
+export const formatGithubRepositoriesResponse = (repositories) => ({
+  count: repositories.length,
+  repositories,
+});
 
 export const formatEventResponse = (eventResult) => {
-  const { _id, type, event_filters, light_animation } = eventResult;
+  const { _id, type, eventFilters = [], animation } = eventResult;
 
   return {
     _id,
     type,
-    event_filters,
-    light_animation,
+    eventFilters,
+    animation,
   };
 };
+
+export const formatEventsResponse = (events) => ({
+  count: events.length,
+  events,
+});

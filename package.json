@@ -16,12 +16,18 @@
     "ws": "^7.3.0"
   },
   "scripts": {
-    "start": "nodemon --exec babel-node src/server.js"
+    "start": "nodemon --exec babel-node src/server.js",
+    "lint": "eslint 'src/**/*.js' --fix"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/node": "^7.10.1",
     "@babel/preset-env": "^7.10.2",
-    "prettier": "^2.0.5"
+    "eslint": "^7.3.1",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "prettier": "^2.0.5",
+    "prettier-eslint-cli": "^5.0.0"
   }
 }

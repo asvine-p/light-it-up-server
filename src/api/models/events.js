@@ -3,18 +3,18 @@ import mongoose from 'mongoose';
 const eventSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   type: { type: String, required: true },
-  event_filters: {
-    repository_name: { type: String, required: true },
-    event_name: { type: String, required: true },
+  eventFilters: {
+    repositoryName: { type: String, required: true },
+    eventName: { type: String, required: true },
     filters: [
       {
-        filter_key: { type: String, isRequired: true },
-        filter_value: { type: mongoose.Schema.Types.Mixed, isRequired: true },
+        filterKey: { type: String, isRequired: true },
+        filterValue: { type: mongoose.Schema.Types.Mixed, required: true },
       },
     ],
   },
-  light_animation: {
-    animation_mode_id: { type: Number, required: true },
+  animation: {
+    lightAnimation: { type: mongoose.Schema.Types.ObjectId, ref: 'LightAnimation' },
     duration: { type: Number, required: true },
   },
 });

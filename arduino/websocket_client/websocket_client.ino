@@ -16,7 +16,7 @@ unsigned int  ledsEffectDuration = 0;
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // WEBSOCKET
-const char* websockets_server = "ws://b102324e6603.ngrok.io"; //server adress and port
+const char* websockets_server = "ws://8fa403b344c3.ngrok.io"; //server adress and port
 using namespace websockets;
 WebsocketsClient client;
 bool isDisconnected = false;
@@ -26,7 +26,6 @@ void setup() {
     Serial.begin(115200);
     connectWifi();
     initLeds();
-
 }
 
 void loop() {
@@ -36,30 +35,10 @@ void loop() {
     reconnectToServer();
 }
 
-void connectWifi() {
-   WiFi.begin(ssid, password);
 
-  while(WiFi.status() != WL_CONNECTED) {
-     Serial.print(".");
-     delay(200);
-  }
-    
-  Serial.println("");
-  Serial.println("WiFi connected");  
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  delay(500);  
-   
-  Serial.println("Connecting to Server");
-  // Setup Callbacks
-  client.onMessage(onMessageCallback);
-  client.onEvent(onEventsCallback);
-    
+void connectToServer() {
   // Connect to server
   client.connect(websockets_server);
-//    client.setInsecure();
-
 
   // Send a message
   client.send("Hi Server!");
@@ -67,10 +46,34 @@ void connectWifi() {
   client.ping();
 }
 
+void connectWifi() {
+   WiFi.begin(ssid, password);
+
+  while(WiFi.status() != WL_CONNECTED) {
+     Serial.print(".");
+     delay(200);
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  delay(500);
+
+  Serial.println("Connecting to Server");
+  // Setup Callbacks
+  client.onMessage(onMessageCallback);
+  client.onEvent(onEventsCallback);
+  
+  connectToServer();
+}
+
+
 void reconnectToServer() {
   if (isDisconnected == true) {
       Serial.print("Reconnecting....");
-      client.connect(websockets_server);
+      connectToServer();
   }
 }
 
@@ -82,13 +85,13 @@ void initLeds() {
 }
 
 void stopLedsAfterDelay() {
-  if (ledsEffectDuration > 0) { 
+  if (ledsEffectDuration > 0) {
     if (millis() >= ledsEffectDuration) {
        Serial.println("STOP EFFECT");
        ledsEffectDuration = 0;
        ws2812fx.stop();
      }
-  }  
+  }
 }
 
 
@@ -102,7 +105,7 @@ void updateLed(int ledModeId, int duration){
 
 void onMessageCallback(WebsocketsMessage message) {
    String data = message.data();
-   
+
    Serial.print("Got Message: ");
    Serial.println(data);
     String ledMode = getParametersFromMessage(data, 0);
@@ -111,7 +114,7 @@ void onMessageCallback(WebsocketsMessage message) {
     Serial.print("ledMode: ");
     Serial.println(ledMode);
     Serial.print("duration: ");
-    Serial.println(duration);    
+    Serial.println(duration);
     updateLed(ledMode.toInt(), duration.toInt());
 }
 
