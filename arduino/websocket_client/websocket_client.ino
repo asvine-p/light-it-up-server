@@ -16,7 +16,7 @@ unsigned int  ledsEffectDuration = 0;
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // WEBSOCKET
-const char* websockets_server = "ws://8fa403b344c3.ngrok.io"; //server adress and port
+const char* websockets_server = "ws://ns542685.ip-198-100-144.net"; //server adress and port
 using namespace websockets;
 WebsocketsClient client;
 bool isDisconnected = false;
@@ -65,7 +65,7 @@ void connectWifi() {
   // Setup Callbacks
   client.onMessage(onMessageCallback);
   client.onEvent(onEventsCallback);
-  
+
   connectToServer();
 }
 
