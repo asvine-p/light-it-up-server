@@ -17,8 +17,8 @@ const initWebSocketServer = (server) => {
 
     // SEND EVENT TO ESP
     githubEmitter.on('githubEvent', (animation) => {
-      const { light_animation: { animation_id } = {}, duration } = animation;
-      ws.send(`${animation_id},${duration}`);
+      const { lightAnimation: { animationId } = {}, duration } = animation;
+      ws.send(`${animationId},${duration}`);
     });
 
     // ON MESSAGE
