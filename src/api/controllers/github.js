@@ -27,8 +27,8 @@ export const onPing = async (payload) => {
   }
 };
 
-const findMatchingEventFromFilters = (events = [], githubPayload = {}) => {
-  return events.find((event) => {
+const findMatchingEventFromFilters =
+  (events = [], githubPayload = {}) => events.find((event) => {
     const { eventFilters: { filters } = {} } = event;
 
     return filters.reduce((acc, currentFilter) => {
@@ -42,7 +42,6 @@ const findMatchingEventFromFilters = (events = [], githubPayload = {}) => {
       return false;
     }, true);
   });
-};
 
 export const onEvent = async (eventName, payload) => {
   const { repository: { name: repositoryName } = {} } = payload;
