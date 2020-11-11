@@ -22,13 +22,9 @@ router.post('/', async (req, res) => {
   try {
     const payload = req.body;
 
-    // eslint-disable-next-line camelcase
-    const { animation_id, name } = payload;
-
     const animation = new LightAnimation({
       _id: new mongoose.Types.ObjectId(),
-      animationId: animation_id,
-      name,
+      ...payload,
     });
 
     const result = await animation.save();

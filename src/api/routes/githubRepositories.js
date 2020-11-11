@@ -2,7 +2,7 @@ import express from 'express';
 
 import GitHubRepository from '../models/githubRepositories';
 import { formatGithubRepositoriesResponse } from '../utils/formatData';
-import { GITHUB_REPO_QUERY } from '../../constatns/querriesConstant';
+import { GITHUB_REPO_QUERY } from '../../constants/querriesConstant';
 
 const router = express.Router();
 

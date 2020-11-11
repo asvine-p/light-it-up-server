@@ -27,8 +27,8 @@ export const onPing = async (payload) => {
   }
 };
 
-const findMatchingEventFromFilters = (events = [], githubPayload = {}) =>
-  events.find((event) => {
+const findMatchingEventFromFilters =
+  (events = [], githubPayload = {}) => events.find((event) => {
     const { eventFilters: { filters } = {} } = event;
 
     return filters.reduce((acc, currentFilter) => {
@@ -63,7 +63,6 @@ export const onEvent = async (eventName, payload) => {
 
     if (event) {
       const { animation } = event;
-
       // EMIT LIGHTS
       githubEventEmitter.emit('githubEvent', animation);
     }

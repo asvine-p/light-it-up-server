@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import Event from '../models/events';
 import LightAnimation from '../models/lightAnimations';
 import { formatEventResponse, formatEventsResponse } from '../utils/formatData';
-import { EVENT_QUERY } from '../../constatns/querriesConstant';
+import { EVENT_QUERY } from '../../constants/querriesConstant';
 
 const router = express.Router();
 
