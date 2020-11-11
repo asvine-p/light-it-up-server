@@ -11,7 +11,7 @@ unsigned int  ledsEffectDuration = 0;
 
 // LEDS
 #define LED_PIN 2                       // 0 = GPIO0, 2=GPIO2
-#define LED_COUNT 50
+#define LED_COUNT 150
 
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
