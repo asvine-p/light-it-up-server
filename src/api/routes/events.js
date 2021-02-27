@@ -91,10 +91,20 @@ router.post('/', async (req, res) => {
 router.put('/:eventId', async (req, res) => {
   try {
     const id = req.params.eventId;
+    const { body: params } = req;
     const updateOps = {};
-    req.body.forEach(({ key, value }) => {
+    params.forEach(({ key, value }) => {
       updateOps[key] = value;
     });
+    const {
+      animation: { animationId },
+    } = updateOps;
+    if (animationId) {
+      const lightAnimation = await LightAnimation.findById(animationId).exec();
+      if (lightAnimation) {
+        updateOps.animation = { lightAnimation, ...updateOps.animation };
+      }
+    }
     const result = await Event.update({ _id: id }, { $set: updateOps }).exec();
 
     if (result) {
